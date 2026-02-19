@@ -1,3 +1,13 @@
+// test
+
+console.log("MYSQLHOST:", process.env.MYSQLHOST);
+console.log("MYSQLPORT:", process.env.MYSQLPORT);
+
+
+
+
+
+
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
