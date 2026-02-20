@@ -31,7 +31,7 @@ const db = mysql.createPool({
 
 
 
-db.connect((err) => {
+/* db.connect((err) => {
     if (err) {
         console.log("Database connection FAILED:", err);
     } else {
@@ -42,7 +42,7 @@ db.connect((err) => {
     if (err) throw err;
     console.log(results);
   });
-});
+}); */
 
 /* TEST ROUTES */
 
