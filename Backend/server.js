@@ -135,7 +135,7 @@ app.post("/api/signup", async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(password, 10)
 
-    const sql = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)"
+    const sql = "INSERT INTO Users (name, email, password) VALUES (?, ?, ?)"
 
     db.query(sql, [name, email, hashedPassword], (err, result) => {
       if (err) {
