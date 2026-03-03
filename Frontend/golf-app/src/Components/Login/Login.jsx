@@ -1,25 +1,56 @@
-import React from 'react'
-import { Link } from "react-router-dom";
+import React, { useState } from 'react';
 import './Login.css';
-import logo from '../../assets/L2.png'
 
-const Login = () => {
+function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await fetch('https://capstone-golf-app-production.up.railway.app/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert(`Welcome back, ${data.username}!`);
+        // You could also save data.userId in localStorage/session for auth
+      } else {
+        alert(data.error);
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Server error');
+    }
+  };
+
   return (
-    <div>
-      <img src={logo} alt="" className='logo-login' />
-      <div className='login'>
-        <h1>Login</h1>
-        <form className='login-form'>
-          <input type="email" placeholder="Email" />
-          <br />
-          <input type="password" placeholder="Password" />
-          <br />
-          <button type="submit">Login</button>
-        </form>
-        <p className="signup-link"> Don’t have an account? <Link to="/home">Sign up</Link></p>
-      </div>
+    <div className='login'>
+      <h1>Login</h1>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <br />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <br />
+        <button type="submit">Login</button>
+      </form>
     </div>
-  )
+  );
 }
 
-export default Login
+export default Login;

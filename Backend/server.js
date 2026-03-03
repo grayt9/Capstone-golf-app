@@ -149,3 +149,35 @@ app.post("/api/signup", async (req, res) => {
     res.status(500).json({ error: "Server error" })
   }
 })
+
+
+
+
+app.post("/api/login", (req, res) => {
+  const { email, password } = req.body;
+
+  // 1. Find user by email
+  const sql = "SELECT * FROM Users WHERE email = ?";
+  db.query(sql, [email], async (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    if (results.length === 0) {
+      // No user found
+      return res.status(401).json({ error: "Invalid email or password" });
+    }
+
+    const user = results[0];
+
+    // 2. Compare entered password with hashed password
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      return res.status(401).json({ error: "Invalid email or password" });
+    }
+
+    // 3. Success — user is authenticated
+    res.json({ message: "Login successful", userId: user.id, username: user.name });
+  });
+});
