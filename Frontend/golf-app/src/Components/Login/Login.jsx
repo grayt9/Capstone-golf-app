@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import './Login.css';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,11 +21,13 @@ function Login() {
       const data = await res.json();
 
       if (res.ok) {
-        alert(`Welcome back, ${data.username}!`);
-        // You could also save data.userId in localStorage/session for auth
-      } else {
-        alert(data.error);
-      }
+    alert(`Welcome back, ${data.username}!`);
+    // Redirect to homepage
+    navigate("/home");  // <-- redirects to homepage
+  } else {
+    alert(data.error);
+  }
+
     } catch (err) {
       console.error(err);
       alert('Server error');
