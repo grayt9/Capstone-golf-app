@@ -1,0 +1,57 @@
+CREATE DATABASE Seminar;
+
+USE Seminar;
+
+CREATE TABLE Users (
+	UserID INT UNSIGNED AUTO_INCREMENT,
+    Name VARCHAR (20),
+    PRIMARY KEY (UserID)
+);
+
+
+CREATE TABLE Course (
+	CourseID INT UNSIGNED AUTO_INCREMENT,
+    NAME VARCHAR (40),
+    Yardage INT UNSIGNED,
+    Par INT UNSIGNED,
+    PRIMARY KEY (CourseID)
+);
+
+CREATE TABLE CourseHole (
+	CourseHoleID INT UNSIGNED AUTO_INCREMENT,
+    CourseID INT UNSIGNED,
+    HoleNumber INT UNSIGNED,
+    Par INT UNSIGNED,
+    Yardage INT UNSIGNED,
+    FOREIGN KEY (CourseID) REFERENCES Course (CourseID),
+    PRIMARY KEY (CourseHoleID)
+);
+
+CREATE TABLE Round (
+	RoundID INT UNSIGNED AUTO_INCREMENT,
+    UserID INT UNSIGNED,
+    CourseID INT UNSIGNED,
+    DatePlayed DATE,
+    FOREIGN KEY (UserID) REFERENCES Users (UserID),
+    FOREIGN KEY (CourseID) REFERENCES Course (CourseID),
+    PRIMARY KEY (RoundID)
+);
+
+CREATE TABLE RoundHoleStats (
+	RoundHoleStatsID INT UNSIGNED AUTO_INCREMENT,
+    RoundID INT UNSIGNED,
+    CourseHoleID INT UNSIGNED,
+    Score INT UNSIGNED,
+    Putts INT UNSIGNED,
+    GIR BOOLEAN,
+    FairwayHit BOOLEAN,
+    FOREIGN KEY (RoundID) REFERENCES Round (RoundID),
+    FOREIGN KEY (CourseHoleID) REFERENCES CourseHole (CourseHoleID),
+    PRIMARY KEY (RoundHoleStatsID)
+);
+
+DESCRIBE Users;
+DESCRIBE Course;
+DESCRIBE CourseHole;
+DESCRIBE Round;
+DESCRIBE RoundHoleStats;

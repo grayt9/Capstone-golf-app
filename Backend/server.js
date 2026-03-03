@@ -1,0 +1,149 @@
+// test
+
+console.log("MYSQLHOST:", process.env.MYSQLHOST);
+console.log("MYSQLPORT:", process.env.MYSQLPORT);
+
+
+
+
+
+const express = require("express");
+const mysql = require("mysql2");
+const cors = require("cors");
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+/* ---------- DATABASE CONNECTION ---------- */
+
+const db = mysql.createPool({
+    host: process.env.MYSQLHOST,
+    user: process.env.MYSQLUSER,
+    password: process.env.MYSQLPASSWORD,
+    database: process.env.MYSQLDATABASE,
+    port: process.env.MYSQLPORT,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
+});
+
+
+
+/* db.connect((err) => {
+    if (err) {
+        console.log("Database connection FAILED:", err);
+    } else {
+        console.log("Connected to MySQL Database!");
+    }
+
+    db.query('SELECT * FROM Course', (err, results, fields) => {
+    if (err) throw err;
+    console.log(results);
+  });
+}); */
+
+/* TEST ROUTES */
+
+// Base test
+app.get("/", (req, res) => {
+    res.send("Golf App Backend Running");
+});
+
+// Pull users from database
+
+
+app.get("/users", (req, res) => {
+    db.query("SELECT * FROM Users", (err, results) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send("Database query failed");
+        } else {
+            res.json(results);
+        }
+    });
+});
+
+
+/* START SERVER */
+
+const PORT = process.env.PORT || 3001;
+
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
+
+
+
+/* List of rounds */
+
+app.get("/rounds", (req, res) => {
+
+    const query = `
+        SELECT
+            r.RoundID,
+            r.DatePlayed,
+            c.Name AS CourseName
+        FROM Round r
+        JOIN Course c ON r.CourseID = c.CourseID
+        ORDER BY r.DatePlayed DESC
+    `;
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send("Query failed");
+        } else {
+            res.json(results);
+        }
+    });
+
+});
+
+
+/* List of Courses */
+
+app.get("/courses", (req, res) => {
+   
+    const query = `
+        SELECT
+            CourseID,
+            Name AS CourseName,
+            Par,
+            Yardage
+        FROM Course
+        ORDER BY CourseID
+    `;
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send("Query failed");
+        } else {
+            res.json(results);
+        }
+    });
+});
+
+
+app.post("/api/signup", async (req, res) => {
+  const { name, email, password } = req.body
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10)
+
+    const sql = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)"
+
+    db.query(sql, [name, email, hashedPassword], (err, result) => {
+      if (err) {
+        console.error(err)
+        return res.status(500).json({ error: "Database error" })
+      }
+
+      res.json({ message: "User created successfully" })
+    })
+  } catch (error) {
+    res.status(500).json({ error: "Server error" })
+  }
+})

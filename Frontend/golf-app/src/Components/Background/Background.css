@@ -1,0 +1,10 @@
+.background {
+    width: 100%;
+    min-height: 100vh;
+    background: url('../../assets/background-signup.jpeg'); /*image*/
+    margin: 0;
+    padding: 0;
+    background-size: cover;        /* fills screen */
+    position: fixed;   /* centers image */
+    background-repeat: no-repeat;
+}

@@ -1,0 +1,44 @@
+* {
+  box-sizing: border-box;
+}
+
+.login {
+  max-width: 500px;
+  margin: 100px auto;
+  padding: 20px;
+  border-radius: 8px;
+   background-color: white;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+h1 {
+  text-align: center;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  text-align: center;
+  
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background-color: #4CAF50;
+  border: none;
+  cursor: pointer;
+}
+
+.signup-link {
+    text-align: center;
+    padding-top: 15px;
+}
+
+.logo-login {
+display: block;
+  margin: 0 auto;
+  width: 275px;
+  padding-top: 55px;
+}
