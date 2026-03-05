@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import './Login.css';
+import logo from '../../assets/golf-ball-logo.png'
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -35,25 +36,30 @@ function Login() {
   };
 
   return (
-    <div className='login'>
-      <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <br />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <br />
-        <button type="submit">Login</button>
-      </form>
+    <div>
+      <img src={logo} alt="" className='logo-login' />
+      <div className='login'>
+        <h1>Login</h1>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <br />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <br />
+          <button type="submit">Login</button>
+        </form>
+        <p className="signup-link">
+           Don’t have an account? <Link to="/signup">Sign up</Link></p>
+      </div>
     </div>
   );
 }

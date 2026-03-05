@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './Signup.css';
 import { Link } from "react-router-dom";
-import logo from '../../assets/L2.png';
+import logo from '../../assets/golf-ball-logo.png';
 
 function Signup() {
   const [username, setUsername] = useState('');
@@ -66,7 +66,7 @@ function Signup() {
           <button type="submit">Create Account</button>
         </form>
         <p className='login-link'>
-          Already have an account? <Link to="/login">Login</Link>
+          Already have an account? <Link to="/">Login</Link>
         </p>
       </div>
     </div>
