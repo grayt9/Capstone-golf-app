@@ -32,6 +32,7 @@ nav ul li{
     border: 0;
     outline: 0;
     font-family: "Poppins", sans-serif;
+    color: inherit;
 }
 
 .btn:hover {

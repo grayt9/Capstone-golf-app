@@ -1,6 +1,7 @@
 import React from 'react'
 import './Navbar.css'
 import logo from '../../assets/golf-ball-logo.png'
+import { Link } from "react-router-dom";
 
 
 const Navbar = () => {
@@ -8,11 +9,11 @@ const Navbar = () => {
     <nav className='container'>
       <img src={logo} alt="" className='logo' />
       <ul>
-        <li><button className='btn'>Home</button></li>
-        <li><button className='btn'>Stats</button></li>
-        <li><button className='btn'>Courses</button></li>
-        <li><button className='btn'>Rounds</button></li>
-        <li><button className='btn'>Settings</button></li>
+        <li><Link to="/home" className="btn">Home</Link></li>
+        <li><Link to="/stats" className="btn">Stats</Link></li>
+        <li><Link to="/courses" className="btn">Courses</Link></li>
+        <li><Link to="/rounds" className="btn">Rounds</Link></li>
+        <li><Link to="/" className="btn">Sign Out</Link></li>
       </ul>
     </nav>
   )
