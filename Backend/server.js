@@ -178,7 +178,7 @@ app.post("/api/login", (req, res) => {
     }
 
     // 3. Success — user is authenticated
-    res.json({ message: "Login successful", userId: user.id, username: user.name });
+    res.json({ message: "Login successful", userId: user.UserID, username: user.Name });
   });
 });
 
