@@ -1,20 +1,31 @@
 import React from 'react'
 import './Navbar.css'
-import logo from '../../assets/golf-ball-logo.png'
-import { Link } from "react-router-dom";
+import logo from '../../Assets/golf-ball-logo.png'
+import { NavLink } from "react-router-dom";
 
 
 const Navbar = () => {
+  const getNavClassName = ({ isActive }) => isActive ? 'btn active' : 'btn'
+  const getSignOutClassName = ({ isActive }) => isActive ? 'btn btn-signout active' : 'btn btn-signout'
+
   return (
-    <nav className='container'>
-      <img src={logo} alt="" className='logo' />
-      <ul>
-        <li><Link to="/home" className="btn">Home</Link></li>
-        <li><Link to="/stats" className="btn">Stats</Link></li>
-        <li><Link to="/courses" className="btn">Courses</Link></li>
-        <li><Link to="/rounds" className="btn">Rounds</Link></li>
-        <li><Link to="/" className="btn">Sign Out</Link></li>
-      </ul>
+    <nav className='site-nav'>
+      <div className='container nav-inner'>
+        <div className='brand-mark'>
+          <img src={logo} alt="Capstone Golf logo" className='logo' />
+          <div className='brand-copy'>
+            <span className='brand-title'>Capstone Golf</span>
+            <span className='brand-subtitle'>Track rounds with confidence</span>
+          </div>
+        </div>
+        <ul className='nav-links'>
+          <li><NavLink to="/home" className={getNavClassName}>Home</NavLink></li>
+          <li><NavLink to="/stats" className={getNavClassName}>Stats</NavLink></li>
+          <li><NavLink to="/courses" className={getNavClassName}>Courses</NavLink></li>
+          <li><NavLink to="/rounds" className={getNavClassName}>Rounds</NavLink></li>
+          <li><NavLink to="/" className={getSignOutClassName}>Sign Out</NavLink></li>
+        </ul>
+      </div>
     </nav>
   )
 }

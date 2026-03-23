@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import Signup from './Components/Signup/Signup'
 import Login from './Components/Login/Login'
 import Background from './Components/Background/Background'
@@ -20,6 +20,7 @@ const App = () => {
           <Route path="/stats" element={<Stats />} />
           <Route path="/courses" element={<Courses />} />
           <Route path="/rounds" element={<Rounds />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Background>
     </BrowserRouter>

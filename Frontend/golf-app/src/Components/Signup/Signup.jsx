@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './Signup.css';
 import { Link } from "react-router-dom";
-import logo from '../../assets/golf-ball-logo.png';
+import logo from '../../Assets/golf-ball-logo.png';
 
 function Signup() {
   const [username, setUsername] = useState('');
@@ -37,32 +37,31 @@ function Signup() {
   };
 
   return (
-    <div>
-      <img src={logo} alt="" className='logo-signup' />
-      <div className='signup'>
-        <h1>Sign Up</h1>
-        <form onSubmit={handleSubmit}>
+    <div className='auth-shell'>
+      <div className='auth-card signup'>
+        <img src={logo} alt="Capstone Golf logo" className='logo-signup' />
+        <p className='auth-eyebrow'>Get Started</p>
+        <h1>Create Your Account</h1>
+        <p className='auth-copy'>Build your golf profile, log rounds faster, and start collecting stats that actually help your game.</p>
+        <form onSubmit={handleSubmit} className='auth-form'>
           <input
             type="text"
             placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
-          <br />
           <input
             type="email"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          <br />
           <input
             type="password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <br />
           <button type="submit">Create Account</button>
         </form>
         <p className='login-link'>
