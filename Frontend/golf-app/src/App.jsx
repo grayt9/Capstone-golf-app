@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Routes, Route } from "react-router-dom"
+import { Routes, Route, Navigate } from "react-router-dom"
 import Signup from './Components/Signup/Signup'
 import Login from './Components/Login/Login'
 import Background from './Components/Background/Background'
@@ -14,17 +14,17 @@ const App = () => {
   return (
     <Background>
       <Routes>
+        <Route path="/" element={<Login setUserId={setUserId} />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/home" element={<Home />} />
         <Route path="/stats" element={<Stats />} />
         <Route path="/rounds" element={<Rounds />} />
-        <Route path="/" element={<Login setUserId={setUserId} />} />
         <Route path="/courses" element={<Courses userId={userId} />} />
         <Route path="/scorecard" element={<Scorecard userId={userId} />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Background>
   )
 }
 
 export default App
-

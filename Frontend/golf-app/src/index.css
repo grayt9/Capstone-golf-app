@@ -1,28 +1,165 @@
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root {
+  font-family: "Outfit", sans-serif;
+  color: #163225;
+  background-color: #edf3ea;
+  --color-text: #163225;
+  --color-text-muted: #486455;
+  --color-surface: rgba(255, 255, 255, 0.88);
+  --color-surface-strong: #ffffff;
+  --color-border: rgba(22, 50, 37, 0.12);
+  --color-primary: #2f6b3c;
+  --color-primary-dark: #24532f;
+  --color-accent: #d8e8ce;
+  --color-overlay: rgba(9, 27, 17, 0.44);
+  --shadow-soft: 0 18px 55px rgba(15, 37, 25, 0.14);
+  --shadow-card: 0 10px 30px rgba(15, 37, 25, 0.12);
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 28px;
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+}
+
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  min-width: 320px;
+  color: var(--color-text);
+  background: #edf3ea;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
 }
 
 a {
-  
+  color: inherit;
+  text-decoration: none;
   line-height: 1;
   cursor: pointer;
 }
 
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
-
 #root {
-  margin: 0;
-  padding: 0;
   max-width: none;
   text-align: initial;
 }
 
 .container {
-  padding-right: 5%;
+  width: min(1120px, calc(100% - 2rem));
+  margin: 0 auto;
+}
+
+.page-shell {
+  width: min(1120px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 0.5rem 0 3rem;
+}
+
+.page-hero {
+  display: grid;
+  gap: var(--space-lg);
+  margin-top: 1rem;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(226, 240, 220, 0.85));
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(10px);
+}
+
+.page-eyebrow {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+}
+
+.page-title {
+  font-family: "Josefin Sans", sans-serif;
+  font-size: clamp(2.25rem, 5vw, 4rem);
+  line-height: 0.95;
+  max-width: 10ch;
+}
+
+.page-copy {
+  max-width: 58ch;
+  font-size: 1.05rem;
+  color: var(--color-text-muted);
+}
+
+.page-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-lg);
+  margin-top: var(--space-xl);
+}
+
+.stat-card,
+.feature-card {
+  padding: var(--space-lg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(8px);
+}
+
+.stat-card h3,
+.feature-card h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1.05rem;
+}
+
+.stat-value {
+  font-family: "Josefin Sans", sans-serif;
+  font-size: 2.4rem;
+  color: var(--color-primary-dark);
+}
+
+.muted {
+  color: var(--color-text-muted);
+}
+
+.section-stack {
+  display: grid;
+  gap: var(--space-lg);
+  margin-top: var(--space-xl);
+}
+
+@media (max-width: 768px) {
+  .page-shell {
+    padding-top: 0.35rem;
+  }
+
+  .page-title {
+    max-width: 100%;
+  }
 }

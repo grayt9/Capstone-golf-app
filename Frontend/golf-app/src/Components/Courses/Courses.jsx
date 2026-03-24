@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from "react-router-dom"
+import Navbar from '../Navbar/Navbar'
 import './Courses.css'
 
 const Courses = ({ userId }) => {
@@ -21,33 +22,40 @@ const Courses = ({ userId }) => {
   )
 
   return (
-    <div className="courses-container">
-      <h1>Course Select Page</h1>
+    <div className='page-shell'>
+      <Navbar/>
+      <section className='page-hero'>
+        <p className='page-eyebrow'>Courses</p>
+        <h1 className='page-title'>Select a course and head straight to your scorecard.</h1>
+        <p className='page-copy'>
+          Search your available course list, compare the basics quickly, and choose where you are playing today.
+        </p>
+      </section>
+      <section className='feature-card courses-panel'>
+        <input
+          type="text"
+          placeholder="Search courses..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="course-search"
+        />
 
-      {/* Search bar */}
-      <input
-        type="text"
-        placeholder="Search courses..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="course-search"
-      />
-
-      {/* List courses */}
-      <div className="course-list">
-        {filteredCourses.map(course => (
-          <div key={course.CourseID} className="course-item">
-            <h3>{course.CourseName}</h3>
-            <p>Par: {course.Par}</p>
-            <p>Yardage: {course.Yardage}</p>
-            <button onClick={() => navigate("/scorecard", { state: { course, userId } })}>
-            Select Course
-            </button>
-            <hr />
-          </div>
-        ))}
-        {filteredCourses.length === 0 && <p>No courses found.</p>}
-      </div>
+        <div className="course-list">
+          {filteredCourses.map(course => (
+            <div key={course.CourseID} className="course-item">
+              <div>
+                <h3>{course.CourseName}</h3>
+                <p className='muted'>Par: {course.Par}</p>
+                <p className='muted'>Yardage: {course.Yardage}</p>
+              </div>
+              <button onClick={() => navigate("/scorecard", { state: { course, userId } })}>
+                Select Course
+              </button>
+            </div>
+          ))}
+          {filteredCourses.length === 0 && <p className='muted'>No courses found.</p>}
+        </div>
+      </section>
     </div>
   )
 }
