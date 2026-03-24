@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import './Login.css';
 import logo from '../../assets/golf-ball-logo.png'
 
-function Login() {
+function Login({ setUserId }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -21,12 +21,15 @@ function Login() {
 
       const data = await res.json();
 
+      console.log("login response:", data) //test
+
       if (res.ok) {
-    alert(`Welcome back, ${data.username}!`);
-    // Redirect to homepage
-    navigate("/home");  // <-- redirects to homepage
-  } else {
-    alert(data.error);
+        setUserId(data.userId);
+        alert(`Welcome back, ${data.username}!`);
+        // Redirect to homepage
+        navigate("/home");  // <-- redirects to homepage
+      } else {
+        alert(data.error);
   }
 
     } catch (err) {

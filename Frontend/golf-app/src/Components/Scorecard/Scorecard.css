@@ -1,0 +1,43 @@
+/* Scorecard.css */
+
+.scorecard-container {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 20px;
+  overflow-y: auto;  /* allows scrolling if content is tall */
+  height: 80vh;      /* makes it scrollable within viewport */
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+}
+
+.hole-row {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr); /* Par, Score, Putts, GIR, Fairway, Hole Number */
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.hole-row input[type="number"] {
+  width: 60px;
+  padding: 5px;
+}
+
+.hole-row label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.scorecard-container h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.hole-row hr {
+  grid-column: span 6; /* make the line go across all columns */
+  border: 0;
+  border-top: 1px solid #ccc;
+  margin-top: 10px;
+}
