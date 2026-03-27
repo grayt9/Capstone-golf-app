@@ -224,3 +224,28 @@ app.post("/api/rounds", (req, res) => {
     res.json({ message: "Round saved successfully", roundId });
   });
 });
+
+// get stats for individual user
+app.get("/api/stats/:userId", (req, res) => {
+  const { userId } = req.params;
+  const query = `
+    SELECT
+      r.RoundID,
+      r.DatePlayed,
+      c.Name AS CourseName,
+      SUM(rhs.Score) AS TotalScore,
+      SUM(rhs.Putts) AS TotalPutts,
+      ROUND(AVG(rhs.GIR) * 100, 1) AS GIRPercent,
+      ROUND(AVG(rhs.FairwayHit) * 100, 1) AS FairwayPercent
+    FROM Round r
+    JOIN Course c ON r.CourseID = c.CourseID
+    JOIN RoundHoleStats rhs ON r.RoundID = rhs.RoundID
+    WHERE r.UserID = ?
+    GROUP BY r.RoundID, r.DatePlayed, c.Name
+    ORDER BY r.DatePlayed ASC
+  `;
+  db.query(query, [userId], (err, results) => {
+    if (err) return res.status(500).json({ error: "Query failed" });
+    res.json(results);
+  });
+});
