@@ -1,25 +1,22 @@
-// test
-
+// Log the active database target during startup so deployment issues are easier to spot.
 console.log("MYSQLHOST:", process.env.MYSQLHOST);
 console.log("MYSQLPORT:", process.env.MYSQLPORT);
-
-
-
-
 
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
 const bcrypt = require('bcrypt');
 
-
 const app = express();
 
+// Enable cross-origin requests from the React frontend and parse JSON request bodies.
 app.use(cors());
 app.use(express.json());
 
 /* ---------- DATABASE CONNECTION ---------- */
 
+// Use a connection pool so the API can serve multiple requests without opening
+// a brand-new database connection every time.
 const db = mysql.createPool({
     host: process.env.MYSQLHOST,
     user: process.env.MYSQLUSER,
@@ -48,14 +45,12 @@ const db = mysql.createPool({
 
 /* TEST ROUTES */
 
-// Base test
+// Simple health-check route used to verify that the Express server is running.
 app.get("/", (req, res) => {
     res.send("Golf App Backend Running");
 });
 
-// Pull users from database
-
-
+// Return all users for testing and verification while the project is in development.
 app.get("/users", (req, res) => {
     db.query("SELECT * FROM Users", (err, results) => {
         if (err) {
@@ -72,6 +67,7 @@ app.get("/users", (req, res) => {
 
 const PORT = process.env.PORT || 3001;
 
+// Start listening after routes are registered so the API is ready to accept traffic.
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
@@ -80,6 +76,7 @@ app.listen(PORT, () => {
 
 /* List of rounds */
 
+// Fetch recent rounds and join each round to its course name for display in the UI.
 app.get("/rounds", (req, res) => {
 
     const query = `
@@ -106,6 +103,8 @@ app.get("/rounds", (req, res) => {
 
 /* List of Courses */
 
+// Return the course catalog so users can choose where they are playing before
+// filling out a scorecard.
 app.get("/courses", (req, res) => {
    
     const query = `
@@ -128,11 +127,12 @@ app.get("/courses", (req, res) => {
     });
 });
 
-
+// Create a new user account by hashing the password before it is stored.
 app.post("/api/signup", async (req, res) => {
   const { name, email, password } = req.body
 
   try {
+    // Bcrypt protects stored passwords so the database never keeps them in plain text.
     const hashedPassword = await bcrypt.hash(password, 10)
 
     const sql = "INSERT INTO Users (name, email, password) VALUES (?, ?, ?)"
@@ -152,11 +152,12 @@ app.post("/api/signup", async (req, res) => {
 
 
 
-
+// Authenticate a returning user by looking up the account and comparing the
+// submitted password against the stored hash.
 app.post("/api/login", (req, res) => {
   const { email, password } = req.body;
 
-  // 1. Find user by email
+  // Step 1: find the user record that matches the submitted email address.
   const sql = "SELECT * FROM Users WHERE email = ?";
   db.query(sql, [email], async (err, results) => {
     if (err) {
@@ -165,33 +166,35 @@ app.post("/api/login", (req, res) => {
     }
 
     if (results.length === 0) {
-      // No user found
+      // Stop early when the email does not exist so we do not compare passwords unnecessarily.
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
     const user = results[0];
 
-    // 2. Compare entered password with hashed password
+    // Step 2: compare the submitted password with the hashed password in the database.
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
-    // 3. Success — user is authenticated
+    // Step 3: return the small set of user data the frontend needs after login.
     res.json({ message: "Login successful", userId: user.UserID, username: user.Name });
   });
 });
 
 
 /* CREATE NEW ROUND WITH HOLES */
+// Save a round header first, then save the per-hole stats that belong to that round.
 app.post("/api/rounds", (req, res) => {
   const { userId, courseId, datePlayed, holes } = req.body;
 
+  // Basic validation prevents incomplete scorecards from being inserted.
   if (!userId || !courseId || !holes || holes.length === 0) {
     return res.status(400).json({ error: "Missing required data" });
   }
 
-  // 1. Insert new round
+  // Step 1: create the parent round row so we get a RoundID to attach hole stats to.
   const insertRoundSql = "INSERT INTO Round (UserID, CourseID, DatePlayed) VALUES (?, ?, ?)";
   db.query(insertRoundSql, [userId, courseId, datePlayed], (err, result) => {
     if (err) {
@@ -199,18 +202,18 @@ app.post("/api/rounds", (req, res) => {
       return res.status(500).json({ error: "Failed to insert round" });
     }
 
-    const roundId = result.insertId; // newly created RoundID
+    const roundId = result.insertId;
 
-    // 2. Insert each hole into RoundHoleStats
+    // Step 2: insert one row per hole into the hole-stats table.
     const insertHoleSql = `
       INSERT INTO RoundHoleStats
         (RoundID, CourseHoleID, Score, Putts, GIR, FairwayHit)
       VALUES (?, ?, ?, ?, ?, ?)
     `;
 
-    // holes may or may not match CourseHoleID; if you don't have CourseHoleID, we can insert NULL
+    // Some clients may not know the CourseHoleID yet, so the API allows that field to be null.
     holes.forEach(hole => {
-      const courseHoleId = hole.courseHoleId || null; // optional
+      const courseHoleId = hole.courseHoleId || null;
       db.query(
         insertHoleSql,
         [roundId, courseHoleId, hole.score, hole.putts, hole.GIR, hole.fairwayHit],
@@ -220,7 +223,7 @@ app.post("/api/rounds", (req, res) => {
       );
     });
 
-    // Done
+    // Respond once the round header exists and the hole inserts have been queued.
     res.json({ message: "Round saved successfully", roundId });
   });
 });

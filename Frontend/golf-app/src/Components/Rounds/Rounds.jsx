@@ -4,6 +4,7 @@ import './Rounds.css'
 
 const Rounds = () => {
   return (
+    // Placeholder page for round history and future round-management tools.
     <div className='page-shell'>
       <Navbar/>
       <section className='page-hero'>

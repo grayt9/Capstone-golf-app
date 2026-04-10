@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 
 function Background({ children }) {
   return (
+    // This wrapper gives every routed page the same background treatment.
     <div className="background">
       {children}
     </div>

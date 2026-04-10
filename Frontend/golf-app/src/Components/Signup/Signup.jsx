@@ -8,8 +8,9 @@ function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  // Send the registration form to the backend so a new user record can be created.
   const handleSubmit = async (e) => {
-    e.preventDefault(); // prevent page reload
+    e.preventDefault();
 
     try {
       const response = await fetch('https://capstone-golf-app-production.up.railway.app/api/signup', {
@@ -37,6 +38,7 @@ function Signup() {
   };
 
   return (
+    // Match the login experience while guiding first-time users through signup.
     <div className='auth-shell'>
       <div className='auth-card signup'>
         <img src={logo} alt="Capstone Golf logo" className='logo-signup' />

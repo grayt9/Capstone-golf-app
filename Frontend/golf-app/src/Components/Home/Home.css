@@ -5,4 +5,13 @@
 
 .home-cta {
   margin-top: 1.5rem;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+  height: 40px;
+}
+
+.home-cta:hover {
+  transform: translateY(-1px);
+  background: rgba(47, 107, 60, 0.08);
+  border-color: rgba(47, 107, 60, 0.2);
+  outline: none;
 }

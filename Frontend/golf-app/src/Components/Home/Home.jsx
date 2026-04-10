@@ -7,6 +7,7 @@ const Home = () => {
   const navigate = useNavigate()
 
   return (
+    // Dashboard-style landing page for logged-in users.
     <div className='page-shell'>
       <Navbar/>
       <section className='page-hero home-hero'>
@@ -16,6 +17,7 @@ const Home = () => {
           Keep your golf data organized in one calm, focused workspace. Review performance trends,
           track familiar courses, and make each round easier to log.
         </p>
+        {/* Shortcut into the course-selection flow for starting a new round. */}
         <button className='home-cta' onClick={() => navigate("/courses")}>
           Play Round
         </button>

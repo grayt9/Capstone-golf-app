@@ -8,7 +8,8 @@ function Login({ setUserId }) {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-
+  // Submit credentials to the backend, then save the returned user id so the
+  // rest of the app knows which golfer is active.
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -26,8 +27,8 @@ function Login({ setUserId }) {
       if (res.ok) {
         setUserId(data.userId);
         alert(`Welcome back, ${data.username}!`);
-        // Redirect to homepage
-        navigate("/home");  // <-- redirects to homepage
+        // Send the user to the dashboard once authentication succeeds.
+        navigate("/home");
       } else {
         alert(data.error);
   }
@@ -39,6 +40,7 @@ function Login({ setUserId }) {
   };
 
   return (
+    // Present a focused login card with a route to account creation for new users.
     <div className='auth-shell'>
       <div className='auth-card login'>
         <img src={logo} alt="Capstone Golf logo" className='logo-login' />

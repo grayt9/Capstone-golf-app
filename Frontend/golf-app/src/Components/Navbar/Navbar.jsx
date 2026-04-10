@@ -5,10 +5,12 @@ import { NavLink } from "react-router-dom";
 
 
 const Navbar = () => {
+  // NavLink supplies an isActive flag, which lets the current page highlight itself.
   const getNavClassName = ({ isActive }) => isActive ? 'btn active' : 'btn'
   const getSignOutClassName = ({ isActive }) => isActive ? 'btn btn-signout active' : 'btn btn-signout'
 
   return (
+    // Shared site navigation used across the main logged-in pages.
     <nav className='site-nav'>
       <div className='container nav-inner'>
         <div className='brand-mark'>

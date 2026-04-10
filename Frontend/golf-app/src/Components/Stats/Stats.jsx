@@ -6,6 +6,7 @@ import './Stats.css'
 
 const Stats = () => {
   return (
+    // Placeholder analytics screen for future scoring and performance summaries.
     <div className='page-shell'>
       <Navbar/>
       <section className='page-hero'>

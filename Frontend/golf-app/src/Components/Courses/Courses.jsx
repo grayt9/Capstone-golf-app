@@ -8,7 +8,7 @@ const Courses = ({ userId }) => {
   const [search, setSearch] = useState("")
   const navigate = useNavigate()
 
-  // Fetch courses from backend
+  // Load the course catalog once when the page opens.
   useEffect(() => {
     fetch("https://capstone-golf-app-production.up.railway.app/courses")
       .then(res => res.json())
@@ -16,12 +16,14 @@ const Courses = ({ userId }) => {
       .catch(err => console.error(err))
   }, [])
 
-  // Filter courses based on search input
+  // Keep filtering client-side so the search feels instant as the user types.
   const filteredCourses = courses.filter(course =>
     course.CourseName.toLowerCase().includes(search.toLowerCase())
   )
 
   return (
+    // This page bridges the dashboard and the scorecard by letting a golfer
+    // choose which course the upcoming round belongs to.
     <div className='page-shell'>
       <Navbar/>
       <section className='page-hero'>
@@ -48,6 +50,7 @@ const Courses = ({ userId }) => {
                 <p className='muted'>Par: {course.Par}</p>
                 <p className='muted'>Yardage: {course.Yardage}</p>
               </div>
+              {/* Pass the selected course and current user id into the scorecard route. */}
               <button onClick={() => navigate("/scorecard", { state: { course, userId } })}>
                 Select Course
               </button>

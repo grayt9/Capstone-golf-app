@@ -6,10 +6,11 @@ const Scorecard = ({ userId }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const selectedCourse = location.state?.course; // course selected from previous page
-  const numHoles = 18; // default 18, can adjust
+  // The chosen course is passed from the course-selection page through router state.
+  const selectedCourse = location.state?.course;
+  const numHoles = 18;
 
-  // Initialize holes array
+  // Build one state object per hole so the form can track all scorecard values in one place.
   const [holes, setHoles] = useState(
     Array.from({ length: numHoles }, (_, i) => ({
       holeNumber: i + 1,
@@ -21,6 +22,7 @@ const Scorecard = ({ userId }) => {
     }))
   );
 
+  // Update one field on one hole without rebuilding the entire scorecard manually.
   const handleChange = (index, field, value) => {
     const updatedHoles = [...holes];
     updatedHoles[index][field] = value;
@@ -29,10 +31,12 @@ const Scorecard = ({ userId }) => {
 
 
   console.log("userId from props:", userId)
+
+  // Convert the form state into the payload expected by the backend round API.
   const handleSaveRound = async () => {
     try {
       const payload = {
-        userId: userId, // pass from logged-in context
+        userId: userId,
         courseId: selectedCourse.CourseID,
         datePlayed: new Date().toISOString().slice(0, 10),
         holes: holes.map(h => ({
@@ -45,7 +49,6 @@ const Scorecard = ({ userId }) => {
         }))
       };
       
-
       console.log("payload:", payload);
       const response = await fetch(
         "https://capstone-golf-app-production.up.railway.app/api/rounds",
@@ -60,7 +63,8 @@ const Scorecard = ({ userId }) => {
 
       if (response.ok) {
         alert("Round saved successfully!");
-        navigate("/home"); // redirect after save
+        // Return to the dashboard after the scorecard has been saved.
+        navigate("/home");
       } else {
         alert("Error saving round: " + data.error);
       }
@@ -71,6 +75,7 @@ const Scorecard = ({ userId }) => {
   };
 
   return (
+    // Render one editable row per hole so the golfer can enter a full round.
     <div className="scorecard-container">
       <h2>{selectedCourse?.CourseName} - Scorecard</h2>
       {holes.map((hole, idx) => (
@@ -119,4 +124,3 @@ const Scorecard = ({ userId }) => {
 };
 
 export default Scorecard;
-

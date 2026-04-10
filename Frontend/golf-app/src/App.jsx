@@ -10,9 +10,13 @@ import Rounds from './Components/Rounds/Rounds'
 import Scorecard from './Components/Scorecard/Scorecard'
 
 const App = () => {
+  // Store the logged-in user id at the top level so routes like Courses and
+  // Scorecard can reuse it without each screen re-authenticating the user.
   const [userId, setUserId] = useState(null)
+
   return (
     <Background>
+      {/* Define the main app routes and fall back to login for unknown URLs. */}
       <Routes>
         <Route path="/" element={<Login setUserId={setUserId} />} />
         <Route path="/signup" element={<Signup />} />
