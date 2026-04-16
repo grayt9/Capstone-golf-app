@@ -191,7 +191,6 @@ app.post("/api/rounds", (req, res) => {
     return res.status(400).json({ error: "Missing required data" });
   }
 
-  // 1. Insert new round
   const insertRoundSql = "INSERT INTO Round (UserID, CourseID, DatePlayed) VALUES (?, ?, ?)";
   db.query(insertRoundSql, [userId, courseId, datePlayed], (err, result) => {
     if (err) {
@@ -199,29 +198,50 @@ app.post("/api/rounds", (req, res) => {
       return res.status(500).json({ error: "Failed to insert round" });
     }
 
-    const roundId = result.insertId; // newly created RoundID
+    const roundId = result.insertId;
+    let completed = 0;
+    let hasError = false;
 
-    // 2. Insert each hole into RoundHoleStats
-    const insertHoleSql = `
-      INSERT INTO RoundHoleStats
-        (RoundID, CourseHoleID, Score, Putts, GIR, FairwayHit)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `;
-
-    // holes may or may not match CourseHoleID; if you don't have CourseHoleID, we can insert NULL
     holes.forEach(hole => {
-      const courseHoleId = hole.courseHoleId || null; // optional
-      db.query(
-        insertHoleSql,
-        [roundId, courseHoleId, hole.score, hole.putts, hole.GIR, hole.fairwayHit],
-        (err2) => {
-          if (err2) console.error("Error inserting hole stats:", err2);
+      // Check if CourseHole already exists for this course + hole number
+      const checkSql = "SELECT CourseHoleID FROM CourseHole WHERE CourseID = ? AND HoleNumber = ?";
+      db.query(checkSql, [courseId, hole.holeNumber], (err, rows) => {
+        if (err || hasError) {
+          hasError = true;
+          return;
         }
-      );
-    });
 
-    // Done
-    res.json({ message: "Round saved successfully", roundId });
+        const insertHoleStats = (courseHoleId) => {
+          const statsSql = `
+            INSERT INTO RoundHoleStats (RoundID, CourseHoleID, Score, Putts, GIR, FairwayHit)
+            VALUES (?, ?, ?, ?, ?, ?)
+          `;
+          db.query(statsSql, [roundId, courseHoleId, hole.score, hole.putts, hole.GIR, hole.fairwayHit], (err) => {
+            if (err) console.error("Error inserting hole stats:", err);
+            completed++;
+            if (completed === holes.length) {
+              res.json({ message: "Round saved successfully", roundId });
+            }
+          });
+        };
+
+        if (rows.length > 0) {
+          // CourseHole already exists, use it
+          insertHoleStats(rows[0].CourseHoleID);
+        } else {
+          // Create new CourseHole record with par data
+          const insertHoleSql = "INSERT INTO CourseHole (CourseID, HoleNumber, Par) VALUES (?, ?, ?)";
+          db.query(insertHoleSql, [courseId, hole.holeNumber, hole.par], (err, holeResult) => {
+            if (err) {
+              console.error("Error inserting course hole:", err);
+              completed++;
+              return;
+            }
+            insertHoleStats(holeResult.insertId);
+          });
+        }
+      });
+    });
   });
 });
 
