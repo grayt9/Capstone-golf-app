@@ -10,18 +10,20 @@ import Rounds from './Components/Rounds/Rounds'
 import Scorecard from './Components/Scorecard/Scorecard'
 
 const App = () => {
-  const [userId, setUserId] = useState(null)
+  //const [userId, setUserId] = useState(null)
+  const [userId, setUserId] = useState(localStorage.getItem("userId"))
+  console.log("App userId state:", userId)
   return (
     <Background>
       <Routes>
         <Route path="/" element={<Login setUserId={setUserId} />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/home" element={<Home />} />
-        <Route path="/stats" element={<Stats />} />
         <Route path="/rounds" element={<Rounds />} />
         <Route path="/courses" element={<Courses userId={userId} />} />
         <Route path="/scorecard" element={<Scorecard userId={userId} />} />
         <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="/stats" element={<Stats userId={userId} />} />
       </Routes>
     </Background>
   )

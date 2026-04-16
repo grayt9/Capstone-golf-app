@@ -1,34 +1,126 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Navbar from '../Navbar/Navbar'
 import './Stats.css'
+import {
+  LineChart, Line, XAxis, YAxis, CartesianGrid,
+  Tooltip, ResponsiveContainer
+} from 'recharts'
 
+const FILTERS = [
+  { key: "TotalScore", label: "Score" },
+  { key: "TotalPutts", label: "Putts" },
+  { key: "GIRPercent", label: "GIR %" },
+  { key: "FairwayPercent", label: "Fairway %" },
+]
 
+const Stats = ({ userId }) => {
+  const [rounds, setRounds] = useState([])
+  const [activeFilter, setActiveFilter] = useState("TotalScore")
 
-const Stats = () => {
+  useEffect(() => {
+    console.log("userId in stats:", userId) //testing
+    if (!userId) return
+    fetch(`https://capstone-golf-app-production.up.railway.app/api/stats/${userId}`)
+      .then(res => res.json())
+      .then(data => {
+        console.log("stats data:", data) //testing 
+        setRounds(data)
+      })
+      .catch(err => console.error(err))
+  }, [userId])
+
+  const chartData = rounds.map(r => ({
+    date: r.CourseName,
+    //date: r.DatePlayed.slice(0, 10),
+    value: r[activeFilter]
+  }))
+
   return (
     <div className='page-shell'>
-      <Navbar/>
+      <Navbar />
       <section className='page-hero'>
         <p className='page-eyebrow'>Stats</p>
         <h1 className='page-title'>Measure what actually improves your round.</h1>
-        <p className='page-copy'>
-          This page is set up for focused performance summaries. As you wire in data, cards like these can
-          surface the metrics golfers care about most without crowding the screen.
-        </p>
       </section>
-      <section className='page-grid'>
-        <article className='feature-card'>
-          <h3>Scoring Trend</h3>
-          <p className='muted'>Highlight improvement over the last 5 to 10 rounds.</p>
-        </article>
-        <article className='feature-card'>
-          <h3>Putting Snapshot</h3>
-          <p className='muted'>Call out average putts per round with an easy visual benchmark.</p>
-        </article>
-        <article className='feature-card'>
-          <h3>Fairways and GIR</h3>
-          <p className='muted'>Pair accuracy metrics together so users can read ball-striking faster.</p>
-        </article>
+
+      <section style={{ padding: "0 2rem 2rem" }}>
+
+        {/* Filter toggles */}
+        <div style={{ display: "flex", gap: "10px", marginBottom: "1.5rem" }}>
+          {FILTERS.map(f => (
+            <button
+              key={f.key}
+              onClick={() => setActiveFilter(f.key)}
+              style={{
+                padding: "8px 18px",
+                borderRadius: "20px",
+                border: "1px solid #ccc",
+                background: activeFilter === f.key ? "#4a7c59" : "#fff",
+                color: activeFilter === f.key ? "#fff" : "#333",
+                cursor: "pointer",
+                fontWeight: activeFilter === f.key ? "500" : "400"
+              }}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Line chart */}
+        {rounds.length === 0 ? (
+          <p style={{ color: "#888" }}>No round data yet. Play a round to see your stats.</p>
+        ) : (
+          <ResponsiveContainer width="100%" height={350}>
+            <LineChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+              <YAxis tick={{ fontSize: 12 }} />
+              <Tooltip />
+              <Line
+                type="monotone"
+                dataKey="value"
+                stroke="#4a7c59"
+                strokeWidth={2}
+                dot={{ r: 4 }}
+                activeDot={{ r: 6 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        )}
+
+        {/* Summary cards */}
+        {rounds.length > 0 && (
+          <div style={{ display: "flex", gap: "12px", marginTop: "2rem", flexWrap: "wrap" }}>
+            <div className="stat-card">
+              <p className="stat-label">Rounds Played</p>
+              <p className="stat-value">{rounds.length}</p>
+            </div>
+            <div className="stat-card">
+              <p className="stat-label">Avg Score</p>
+              <p className="stat-value">
+                {(rounds.reduce((a, r) => a + Number(r.TotalScore), 0) / rounds.length).toFixed(1)}
+              </p>
+            </div>
+            <div className="stat-card">
+              <p className="stat-label">Avg Putts</p>
+              <p className="stat-value">
+                {(rounds.reduce((a, r) => a + Number(r.TotalPutts), 0) / rounds.length).toFixed(1)}
+              </p>
+            </div>
+            <div className="stat-card">
+              <p className="stat-label">Avg GIR %</p>
+              <p className="stat-value">
+                {(rounds.reduce((a, r) => a + Number(r.GIRPercent), 0) / rounds.length).toFixed(1)}%
+              </p>
+            </div>
+            <div className="stat-card">
+              <p className="stat-label">Avg Fairway %</p>
+              <p className="stat-value">
+                {(rounds.reduce((a, r) => a + Number(r.FairwayPercent), 0) / rounds.length).toFixed(1)}%
+              </p>
+            </div>
+          </div>
+        )}
       </section>
     </div>
   )

@@ -25,6 +25,7 @@ function Login({ setUserId }) {
 
       if (res.ok) {
         setUserId(data.userId);
+        localStorage.setItem("userId", data.userId)
         alert(`Welcome back, ${data.username}!`);
         // Redirect to homepage
         navigate("/home");  // <-- redirects to homepage
