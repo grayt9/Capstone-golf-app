@@ -269,3 +269,17 @@ app.get("/api/stats/:userId", (req, res) => {
     res.json(results);
   });
 });
+
+
+//fix for dynamic course par saving 
+app.get("/courses/:courseId/holes", (req, res) => {
+  const { courseId } = req.params;
+  db.query(
+    "SELECT * FROM CourseHole WHERE CourseID = ? ORDER BY HoleNumber",
+    [courseId],
+    (err, results) => {
+      if (err) return res.status(500).send("Query failed");
+      res.json(results);
+    }
+  );
+});
