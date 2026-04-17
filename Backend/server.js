@@ -283,3 +283,21 @@ app.get("/courses/:courseId/holes", (req, res) => {
     }
   );
 });
+
+//Allow user to add a new course 
+app.post("/api/courses", (req, res) => {
+  const { name, par, yardage } = req.body;
+
+  if (!name || !par) {
+    return res.status(400).json({ error: "Name and par are required" });
+  }
+
+  const sql = "INSERT INTO Course (Name, Par, Yardage) VALUES (?, ?, ?)";
+  db.query(sql, [name, par, yardage || null], (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Failed to add course" });
+    }
+    res.json({ message: "Course added successfully", courseId: result.insertId });
+  });
+});
