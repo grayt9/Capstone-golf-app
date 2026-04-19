@@ -1,0 +1,168 @@
+.rounds-list {
+  display: grid;
+  gap: var(--space-sm);
+  margin-top: var(--space-xl);
+}
+
+.round-row {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(8px);
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+
+.round-row--open {
+  box-shadow: var(--shadow-soft);
+}
+
+.round-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  padding: var(--space-md) var(--space-lg);
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+}
+
+.round-summary:hover {
+  background: rgba(47, 107, 60, 0.04);
+}
+
+.round-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.round-course {
+  font-weight: 500;
+  font-size: 1rem;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.round-date {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.round-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  flex-shrink: 0;
+}
+
+.round-stats {
+  display: flex;
+  gap: var(--space-lg);
+}
+
+.round-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.round-stat-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.round-stat-value {
+  font-family: "Josefin Sans", sans-serif;
+  font-size: 1.4rem;
+  color: var(--color-primary-dark);
+}
+
+.round-chevron {
+  font-size: 1.2rem;
+  color: var(--color-text-muted);
+  transition: transform 0.2s;
+  line-height: 1;
+}
+
+.round-chevron--up {
+  transform: rotate(180deg);
+}
+
+/* Expanded hole detail */
+
+.round-detail {
+  border-top: 1px solid var(--color-border);
+  overflow-x: auto;
+}
+
+.holes-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.holes-table th,
+.holes-table td {
+  padding: 0.5rem 0.75rem;
+  text-align: center;
+}
+
+.holes-table th {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  background: rgba(47, 107, 60, 0.04);
+}
+
+.holes-table tbody tr:nth-child(even) {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.holes-table td:first-child {
+  font-weight: 500;
+}
+
+.under-par {
+  color: #2f6b3c;
+  font-weight: 600;
+}
+
+.even-par {
+  color: var(--color-text-muted);
+}
+
+.over-par {
+  color: #b94040;
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .round-summary {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .round-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .round-stats {
+    gap: var(--space-md);
+  }
+}
