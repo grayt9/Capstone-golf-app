@@ -271,7 +271,29 @@ app.get("/api/stats/:userId", (req, res) => {
 });
 
 
-//fix for dynamic course par saving 
+// hole-by-hole stats for a specific round
+app.get("/api/rounds/:roundId/holes", (req, res) => {
+  const { roundId } = req.params;
+  const query = `
+    SELECT
+      ch.HoleNumber,
+      ch.Par,
+      rhs.Score,
+      rhs.Putts,
+      rhs.GIR,
+      rhs.FairwayHit
+    FROM RoundHoleStats rhs
+    JOIN CourseHole ch ON rhs.CourseHoleID = ch.CourseHoleID
+    WHERE rhs.RoundID = ?
+    ORDER BY ch.HoleNumber
+  `;
+  db.query(query, [roundId], (err, results) => {
+    if (err) return res.status(500).json({ error: "Query failed" });
+    res.json(results);
+  });
+});
+
+//fix for dynamic course par saving
 app.get("/courses/:courseId/holes", (req, res) => {
   const { courseId } = req.params;
   db.query(
