@@ -260,10 +260,11 @@ app.get("/api/stats/:userId", (req, res) => {
       SUM(rhs.Score) AS TotalScore,
       SUM(rhs.Putts) AS TotalPutts,
       ROUND(AVG(rhs.GIR) * 100, 1) AS GIRPercent,
-      ROUND(AVG(rhs.FairwayHit) * 100, 1) AS FairwayPercent
+      ROUND(AVG(CASE WHEN ch.Par > 3 THEN rhs.FairwayHit ELSE NULL END) * 100, 1) AS FairwayPercent
     FROM Round r
     JOIN Course c ON r.CourseID = c.CourseID
     JOIN RoundHoleStats rhs ON r.RoundID = rhs.RoundID
+    JOIN CourseHole ch ON rhs.CourseHoleID = ch.CourseHoleID
     WHERE r.UserID = ?
     GROUP BY r.RoundID, r.DatePlayed, c.Name
     ORDER BY r.DatePlayed ASC

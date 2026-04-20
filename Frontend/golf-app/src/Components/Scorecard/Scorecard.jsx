@@ -175,14 +175,16 @@ const Scorecard = ({ userId }) => {
             />
             GIR
           </label>
-          <label>
-            <input
-              type="checkbox"
-              checked={hole.fairwayHit}
-              onChange={e => handleChange("fairwayHit", e.target.checked)}
-            />
-            Fairway Hit
-          </label>
+          {Number(hole.par) !== 3 && (
+            <label>
+              <input
+                type="checkbox"
+                checked={hole.fairwayHit}
+                onChange={e => handleChange("fairwayHit", e.target.checked)}
+              />
+              Fairway Hit
+            </label>
+          )}
         </div>
       </div>
 
