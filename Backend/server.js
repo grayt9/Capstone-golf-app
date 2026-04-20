@@ -264,7 +264,7 @@ app.get("/api/stats/:userId", (req, res) => {
     FROM Round r
     JOIN Course c ON r.CourseID = c.CourseID
     JOIN RoundHoleStats rhs ON r.RoundID = rhs.RoundID
-    JOIN CourseHole ch ON rhs.CourseHoleID = ch.CourseHoleID
+    LEFT JOIN CourseHole ch ON rhs.CourseHoleID = ch.CourseHoleID
     WHERE r.UserID = ?
     GROUP BY r.RoundID, r.DatePlayed, c.Name
     ORDER BY r.DatePlayed ASC
