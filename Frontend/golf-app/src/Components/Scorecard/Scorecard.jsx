@@ -48,6 +48,12 @@ const Scorecard = ({ userId }) => {
   };
 
   const handleNext = () => {
+    const h = holes[currentHole]
+    if (h.par === "" || h.score === "" || h.putts === "") {
+      setSaveError(`Please fill in par, score, and putts before continuing.`)
+      return
+    }
+    setSaveError("")
     if (currentHole < numHoles - 1) setCurrentHole(currentHole + 1);
   };
 
@@ -57,6 +63,13 @@ const Scorecard = ({ userId }) => {
 
   const handleSaveRound = async () => {
     setSaveError("");
+
+    const incomplete = holes.find(h => h.par === "" || h.score === "" || h.putts === "")
+    if (incomplete) {
+      setSaveError(`Hole ${incomplete.holeNumber} is missing par, score, or putts.`)
+      return
+    }
+
     setSaving(true);
     try {
       const payload = {
