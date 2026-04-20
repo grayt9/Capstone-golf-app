@@ -335,7 +335,7 @@ app.post("/api/forgot-password", async (req, res) => {
 
         try {
           await resend.emails.send({
-            from: 'onboarding@resend.dev',
+            from: 'noreply@capstonegolf.org',
             to: email,
             subject: 'Reset your password',
             html: `
