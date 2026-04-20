@@ -109,6 +109,20 @@ const Stats = ({ userId }) => {
         {/* Summary cards */}
         {rounds.length > 0 && (
           <div style={{ display: "flex", gap: "12px", marginTop: "2rem", flexWrap: "wrap" }}>
+            <div className="stat-card best-round-card">
+              <p className="stat-label">Best Round</p>
+              <p className="stat-value">
+                {Math.min(...rounds.map(r => Number(r.TotalScore)))}
+              </p>
+              {(() => {
+                const best = rounds.reduce((a, r) => Number(r.TotalScore) < Number(a.TotalScore) ? r : a)
+                return (
+                  <p className="best-round-meta">
+                    {best.CourseName} · {new Date(best.DatePlayed).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  </p>
+                )
+              })()}
+            </div>
             <div className="stat-card">
               <p className="stat-label">Rounds Played</p>
               <p className="stat-value">{rounds.length}</p>

@@ -19,3 +19,14 @@
   margin: 0;
   color: #222;
 }
+
+.best-round-card {
+  border-color: #c9a84c;
+  background: linear-gradient(135deg, #fffdf4, #fef9e4);
+}
+
+.best-round-meta {
+  font-size: 11px;
+  color: #888;
+  margin-top: 4px;
+}
