@@ -29,11 +29,17 @@ const Stats = ({ userId }) => {
       .catch(err => console.error(err))
   }, [userId])
 
-  const chartData = rounds.map(r => ({
-    date: r.CourseName,
-    //date: r.DatePlayed.slice(0, 10),
-    value: r[activeFilter]
-  }))
+  const dateCounts = rounds.reduce((acc, r) => {
+    const d = new Date(r.DatePlayed).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    acc[d] = (acc[d] || 0) + 1
+    return acc
+  }, {})
+
+  const chartData = rounds.map(r => {
+    const date = new Date(r.DatePlayed).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    const label = dateCounts[date] > 1 ? `${date} · ${r.CourseName.split(' ')[0]}` : date
+    return { date: label, course: r.CourseName, value: r[activeFilter] }
+  })
 
   return (
     <div className='page-shell'>
@@ -70,12 +76,23 @@ const Stats = ({ userId }) => {
         {rounds.length === 0 ? (
           <p style={{ color: "#888" }}>No round data yet. Play a round to see your stats.</p>
         ) : (
+          <div style={{ background: 'var(--color-surface-strong)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', padding: '1.5rem', boxShadow: 'var(--shadow-card)' }}>
           <ResponsiveContainer width="100%" height={350}>
             <LineChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" tick={{ fontSize: 12 }} />
               <YAxis tick={{ fontSize: 12 }} />
-              <Tooltip />
+              <Tooltip content={({ active, payload }) => {
+                if (!active || !payload?.length) return null
+                const { date, course, value } = payload[0].payload
+                return (
+                  <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 8, padding: '8px 12px', fontSize: 13 }}>
+                    <p style={{ fontWeight: 600, marginBottom: 2 }}>{course}</p>
+                    <p style={{ color: '#888', marginBottom: 4 }}>{date}</p>
+                    <p style={{ color: '#2f6b3c', fontWeight: 500 }}>{FILTERS.find(f => f.key === activeFilter)?.label}: {value}</p>
+                  </div>
+                )
+              }} />
               <Line
                 type="monotone"
                 dataKey="value"
@@ -86,6 +103,7 @@ const Stats = ({ userId }) => {
               />
             </LineChart>
           </ResponsiveContainer>
+          </div>
         )}
 
         {/* Summary cards */}

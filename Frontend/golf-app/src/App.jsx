@@ -8,6 +8,8 @@ import Stats from './Components/Stats/Stats'
 import Courses from './Components/Courses/Courses'
 import Rounds from './Components/Rounds/Rounds'
 import Scorecard from './Components/Scorecard/Scorecard'
+import ForgotPassword from './Components/ForgotPassword/ForgotPassword'
+import ResetPassword from './Components/ResetPassword/ResetPassword'
 
 const App = () => {
   //const [userId, setUserId] = useState(null)
@@ -18,10 +20,12 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Login setUserId={setUserId} />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/home" element={<Home />} />
+        <Route path="/home" element={<Home userId={userId} />} />
         <Route path="/rounds" element={<Rounds userId={userId} />} />
         <Route path="/courses" element={<Courses userId={userId} />} />
         <Route path="/scorecard" element={<Scorecard userId={userId} />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="*" element={<Navigate to="/" replace />} />
         <Route path="/stats" element={<Stats userId={userId} />} />
       </Routes>

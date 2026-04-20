@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import './Login.css';
 import logo from '../../Assets/golf-ball-logo.png'
@@ -6,11 +6,14 @@ import logo from '../../Assets/golf-ball-logo.png'
 function Login({ setUserId }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    setLoading(true);
 
     try {
       const res = await fetch('https://capstone-golf-app-production.up.railway.app/api/login', {
@@ -21,21 +24,18 @@ function Login({ setUserId }) {
 
       const data = await res.json();
 
-      console.log("login response:", data) //test
-
       if (res.ok) {
         setUserId(data.userId);
-        localStorage.setItem("userId", data.userId)
-        alert(`Welcome back, ${data.username}!`);
-        // Redirect to homepage
-        navigate("/home");  // <-- redirects to homepage
+        localStorage.setItem("userId", data.userId);
+        navigate("/home");
       } else {
-        alert(data.error);
-  }
-
+        setError(data.error || 'Login failed. Please try again.');
+      }
     } catch (err) {
       console.error(err);
-      alert('Server error');
+      setError('Server error. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -47,22 +47,31 @@ function Login({ setUserId }) {
         <h1>Login</h1>
         <p className='auth-copy'>Pick up where you left off and keep your rounds, stats, and courses in one place.</p>
         <form onSubmit={handleSubmit} className='auth-form'>
+          {error && <p className='auth-error'>{error}</p>}
           <input
             type="email"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
           <input
             type="password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
-          <button type="submit">Login</button>
+          <button type="submit" disabled={loading}>
+            {loading ? 'Logging in…' : 'Login'}
+          </button>
         </form>
         <p className="signup-link">
-           Don’t have an account? <Link to="/signup">Sign up</Link></p>
+          <Link to="/forgot-password">Forgot your password?</Link>
+        </p>
+        <p className="signup-link">
+          Don't have an account? <Link to="/signup">Sign up</Link>
+        </p>
       </div>
     </div>
   );

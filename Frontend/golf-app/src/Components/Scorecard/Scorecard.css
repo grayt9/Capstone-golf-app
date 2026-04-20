@@ -134,3 +134,34 @@
 .add-course-form button:disabled {
   background: #ccc;
 }
+
+.save-error {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  background: rgba(185, 64, 64, 0.08);
+  border: 1px solid rgba(185, 64, 64, 0.2);
+  color: #b94040;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.save-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.save-success-icon {
+  font-size: 3rem;
+  color: #4a7c59;
+}
+
+.save-success-sub {
+  color: #888;
+  font-size: 0.95rem;
+}

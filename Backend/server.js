@@ -11,6 +11,10 @@ const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
+const { Resend } = require('resend');
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 
 const app = express();
@@ -306,7 +310,77 @@ app.get("/courses/:courseId/holes", (req, res) => {
   );
 });
 
-//Allow user to add a new course 
+// Request password reset
+app.post("/api/forgot-password", async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: "Email is required" });
+
+  db.query("SELECT UserID FROM Users WHERE email = ?", [email], async (err, results) => {
+    if (err) return res.status(500).json({ error: "Database error" });
+
+    // Always respond the same way to avoid leaking whether an email exists
+    if (results.length === 0) return res.json({ message: "If that email exists, a reset link has been sent." });
+
+    const userId = results[0].UserID;
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 1000 * 60 * 60); // 1 hour
+
+    db.query(
+      "INSERT INTO PasswordResetTokens (UserID, Token, ExpiresAt) VALUES (?, ?, ?)",
+      [userId, token, expiresAt],
+      async (err) => {
+        if (err) return res.status(500).json({ error: "Failed to create reset token" });
+
+        const resetLink = `https://capstone-golf-app.vercel.app/reset-password?token=${token}`;
+
+        try {
+          await resend.emails.send({
+            from: 'onboarding@resend.dev',
+            to: email,
+            subject: 'Reset your password',
+            html: `
+              <p>You requested a password reset for your Golf App account.</p>
+              <p><a href="${resetLink}">Click here to reset your password</a></p>
+              <p>This link expires in 1 hour. If you didn't request this, you can ignore this email.</p>
+            `
+          });
+          res.json({ message: "If that email exists, a reset link has been sent." });
+        } catch (emailErr) {
+          console.error("Email send failed:", emailErr);
+          res.status(500).json({ error: "Failed to send reset email" });
+        }
+      }
+    );
+  });
+});
+
+// Reset password with token
+app.post("/api/reset-password", async (req, res) => {
+  const { token, password } = req.body;
+  if (!token || !password) return res.status(400).json({ error: "Token and password are required" });
+
+  const now = new Date();
+  db.query(
+    "SELECT * FROM PasswordResetTokens WHERE Token = ? AND Used = 0 AND ExpiresAt > ?",
+    [token, now],
+    async (err, results) => {
+      if (err) return res.status(500).json({ error: "Database error" });
+      if (results.length === 0) return res.status(400).json({ error: "Invalid or expired reset link." });
+
+      const { TokenID, UserID } = results[0];
+      const hashed = await bcrypt.hash(password, 10);
+
+      db.query("UPDATE Users SET password = ? WHERE UserID = ?", [hashed, UserID], (err) => {
+        if (err) return res.status(500).json({ error: "Failed to update password" });
+
+        db.query("UPDATE PasswordResetTokens SET Used = 1 WHERE TokenID = ?", [TokenID]);
+        res.json({ message: "Password updated successfully" });
+      });
+    }
+  );
+});
+
+//Allow user to add a new course
 app.post("/api/courses", (req, res) => {
   const { name, par, yardage } = req.body;
 

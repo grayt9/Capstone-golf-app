@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./Scorecard.css";
 
@@ -22,23 +22,24 @@ const Scorecard = ({ userId }) => {
   );
 
   const [currentHole, setCurrentHole] = useState(0);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-  if (!selectedCourse) return;
-
-  fetch(`https://capstone-golf-app-production.up.railway.app/courses/${selectedCourse.CourseID}/holes`)
-    .then(res => res.json())
-    .then(data => {
-      console.log("hole data:", data)  // right here
-      if (data.length > 0) {
-        setHoles(prev => prev.map(hole => {
-          const dbHole = data.find(h => h.HoleNumber === hole.holeNumber);
-          return dbHole ? { ...hole, par: dbHole.Par, courseHoleId: dbHole.CourseHoleID } : hole;
-        }));
-      }
-    })
-    .catch(err => console.error(err));
-}, [selectedCourse]);
+    if (!selectedCourse) return;
+    fetch(`https://capstone-golf-app-production.up.railway.app/courses/${selectedCourse.CourseID}/holes`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.length > 0) {
+          setHoles(prev => prev.map(hole => {
+            const dbHole = data.find(h => h.HoleNumber === hole.holeNumber);
+            return dbHole ? { ...hole, par: dbHole.Par, courseHoleId: dbHole.CourseHoleID } : hole;
+          }));
+        }
+      })
+      .catch(err => console.error(err));
+  }, [selectedCourse]);
 
   const handleChange = (field, value) => {
     const updatedHoles = [...holes];
@@ -55,10 +56,11 @@ const Scorecard = ({ userId }) => {
   };
 
   const handleSaveRound = async () => {
-    console.log("userId from props:", userId);
+    setSaveError("");
+    setSaving(true);
     try {
       const payload = {
-        userId: userId,
+        userId,
         courseId: selectedCourse.CourseID,
         datePlayed: new Date().toISOString().slice(0, 10),
         holes: holes.map(h => ({
@@ -72,8 +74,6 @@ const Scorecard = ({ userId }) => {
         }))
       };
 
-      console.log("payload:", payload);
-
       const response = await fetch(
         "https://capstone-golf-app-production.up.railway.app/api/rounds",
         {
@@ -86,18 +86,32 @@ const Scorecard = ({ userId }) => {
       const data = await response.json();
 
       if (response.ok) {
-        alert("Round saved successfully!");
-        navigate("/home");
+        setSaved(true);
+        setTimeout(() => navigate("/home"), 1500);
       } else {
-        alert("Error saving round: " + data.error);
+        setSaveError(data.error || "Failed to save round. Please try again.");
       }
     } catch (err) {
       console.error(err);
-      alert("Error saving round");
+      setSaveError("Server error. Please try again.");
+    } finally {
+      setSaving(false);
     }
   };
 
   const hole = holes[currentHole];
+
+  if (saved) {
+    return (
+      <div className="scorecard-container">
+        <div className="save-success">
+          <p className="save-success-icon">✓</p>
+          <h2>Round Saved!</h2>
+          <p className="save-success-sub">Heading back to your dashboard…</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="scorecard-container">
@@ -159,12 +173,16 @@ const Scorecard = ({ userId }) => {
         </div>
       </div>
 
+      {saveError && <p className="save-error">{saveError}</p>}
+
       <div className="hole-nav">
         <button onClick={handlePrev} disabled={currentHole === 0}>
           Previous
         </button>
         {currentHole === numHoles - 1 ? (
-          <button onClick={handleSaveRound}>Save Round</button>
+          <button onClick={handleSaveRound} disabled={saving}>
+            {saving ? "Saving…" : "Save Round"}
+          </button>
         ) : (
           <button onClick={handleNext}>Next</button>
         )}
