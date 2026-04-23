@@ -82,7 +82,7 @@ const Scorecard = ({ userId }) => {
           par: Number(h.par),
           score: Number(h.score),
           putts: Number(h.putts),
-          GIR: Boolean(h.GIR),
+          GIR: (Number(h.score) - Number(h.putts)) <= (Number(h.par) - 2),
           fairwayHit: Boolean(h.fairwayHit)
         }))
       };
@@ -166,16 +166,8 @@ const Scorecard = ({ userId }) => {
           onChange={e => handleChange("putts", e.target.value)}
         />
 
-        <div className="checkbox-row">
-          <label>
-            <input
-              type="checkbox"
-              checked={hole.GIR}
-              onChange={e => handleChange("GIR", e.target.checked)}
-            />
-            GIR
-          </label>
-          {Number(hole.par) !== 3 && (
+        {Number(hole.par) !== 3 && (
+          <div className="checkbox-row">
             <label>
               <input
                 type="checkbox"
@@ -184,8 +176,8 @@ const Scorecard = ({ userId }) => {
               />
               Fairway Hit
             </label>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {saveError && <p className="save-error">{saveError}</p>}

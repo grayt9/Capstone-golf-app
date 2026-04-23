@@ -259,7 +259,7 @@ app.get("/api/stats/:userId", (req, res) => {
       c.Name AS CourseName,
       SUM(rhs.Score) AS TotalScore,
       SUM(rhs.Putts) AS TotalPutts,
-      ROUND(AVG(rhs.GIR) * 100, 1) AS GIRPercent,
+      ROUND(AVG(CASE WHEN (rhs.Score - rhs.Putts) <= (ch.Par - 2) THEN 1 ELSE 0 END) * 100, 1) AS GIRPercent,
       ROUND(AVG(CASE WHEN ch.Par > 3 THEN rhs.FairwayHit ELSE NULL END) * 100, 1) AS FairwayPercent
     FROM Round r
     JOIN Course c ON r.CourseID = c.CourseID
